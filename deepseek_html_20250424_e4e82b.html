@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HazelMoon Executor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #0a0a0a, #1a1a2e, #16213e, #0f3460);
+            background-size: 400% 400%;
+            color: #ffffff;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: rgba(0, 255, 136, 0.5);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); opacity: 1; }
+            100% { transform: translateY(-1000px) translateX(200px); opacity: 0; }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .title {
+            font-size: 4rem;
+            color: #00ff88;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 20px rgba(0,255,136,0.6);
+            position: relative;
+            display: inline-block;
+        }
+
+        .title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #00ff88, transparent);
+            border-radius: 3px;
+        }
+
+        .version-info {
+            font-size: 2rem;
+            color: #00ff88;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .security-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.8rem 1.5rem;
+            background: rgba(0,255,136,0.2);
+            border-radius: 30px;
+            font-size: 1.2rem;
+            margin: 1.5rem 0;
+            border: 1px solid rgba(0,255,136,0.4);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .security-badge:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0,255,136,0.3);
+        }
+
+        .security-badge i {
+            margin-right: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .info-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 2.5rem;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0,255,136,0.1) 0%, transparent 70%);
+            transform: scale(0);
+            transition: transform 0.6s ease;
+            pointer-events: none;
+        }
+
+        .info-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            border-color: rgba(0,255,136,0.3);
+        }
+
+        .info-card:hover::before {
+            transform: scale(1);
+        }
+
+        .info-card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #00ff88;
+            display: flex;
+            align-items: center;
+        }
+
+        .info-card h2 i {
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .feature-list li {
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 1.2rem;
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .feature-list li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: #00ff88;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(0,255,136,0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(0,255,136,0.2);
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .stats:hover {
+            background: rgba(0,255,136,0.15);
+            transform: scale(1.01);
+        }
+
+        .stats div {
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .stats i {
+            color: #00ff88;
+            margin-right: 8px;
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin: 4rem 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1.5rem 3rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.3rem;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+            z-index: -1;
+        }
+
+        .windows-btn {
+            background: linear-gradient(135deg, #0078d4, #004e8c);
+            color: white;
+        }
+
+        .android-btn {
+            background: linear-gradient(135deg, #3ddc84, #2a9d8f);
+            color: #000;
+        }
+
+        .discord-btn {
+            background: linear-gradient(135deg, #5865f2, #3a45a3);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
+
+        .btn:hover::before {
+            transform: translateX(100%);
+        }
+
+        .btn:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .btn i {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .btn:hover i {
+            transform: scale(1.2);
+        }
+
+        .glow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: radial-gradient(circle at center, rgba(0,255,136,0.4) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+
+        .info-card:hover .glow {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem 1.5rem;
+            }
+            
+            .title {
+                font-size: 3rem;
+            }
+            
+            .version-info {
+                font-size: 1.5rem;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .download-buttons {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+        }
+
+        /* Floating animation for cards */
+        @keyframes floatCard {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .info-card:nth-child(1) { animation: floatCard 6s ease-in-out infinite; }
+        .info-card:nth-child(2) { animation: floatCard 6s ease-in-out infinite 1s; }
+        .info-card:nth-child(3) { animation: floatCard 6s ease-in-out infinite 2s; }
+
+        /* Ripple effect for buttons */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple {
+            to { transform: scale(4); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1 class="title">HazelMoon</h1>
+            <div class="version-info">99 UNC & 98 SUNC</div>
+            <div class="security-badge">
+                <i class="fas fa-shield-alt"></i> Secure & Undetected
+            </div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="glow"></div>
+                <h2><i class="fas fa-bolt"></i> Unrestricted Lua Execution</h2>
+                <ul class="feature-list">
+                    <li>Advanced script compiler with optimization</li>
+                    <li>Multi-threaded execution environment</li>
+                    <li>Full cross-platform compatibility</li>
+                    <li>Low-level API access</li>
+                    <li>Real-time debugging tools</li>
+                </ul>
+            </div>
+
+            <div class="info-card">
+                <div class="glow"></div>
+                <h2><i class="fas fa-lock"></i> Advanced Security</h2>
+                <p style="font-size: 1.2rem; line-height: 1.6;">Continuously updated to bypass the latest Hyperion security measures with our proprietary detection evasion system.</p>
+                <div class="stats">
+                    <div><i class="fas fa-clock"></i> Last Updated: <br><strong>24h ago</strong></div>
+                    <div><i class="fas fa-wrench"></i> Patches: <br><strong>15+</strong></div>
+                    <div><i class="fas fa-check-circle"></i> Status: <br><strong>Undetected</strong></div>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="glow"></div>
+                <h2><i class="fas fa-star"></i> Premium Features</h2>
+                <ul class="feature-list">
+                    <li>Over 150+ native functions</li>
+                    <li>Customizable UI themes</li>
+                    <li>Intelligent auto-update system</li>
+                    <li>Built-in script hub with 100+ scripts</li>
+                    <li>Performance monitoring dashboard</li>
+                    <li>Remote script execution</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="download-buttons">
+            <a href="#" class="btn windows-btn" id="windowsBtn">
+                <i class="fab fa-windows"></i>
+                Windows Download
+            </a>
+            <a href="#" class="btn android-btn" id="androidBtn">
+                <i class="fab fa-android"></i>
+                Android APK
+            </a>
+        </div>
+
+        <div class="stats">
+            <div>
+                <i class="fas fa-users"></i> <strong>85,670</strong> Active Community Members
+            </div>
+            <div>
+                <i class="fas fa-download"></i> <strong>250,000+</strong> Downloads
+            </div>
+            <a href="https://discord.gg/dqTzum2tVE" class="btn discord-btn" id="discordBtn">
+                <i class="fab fa-discord"></i>
+                Join Our Discord
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Create particles
+        const particlesContainer = document.getElementById('particles');
+        const particleCount = 50;
+        
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            
+            // Random position
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            
+            // Random size
+            const size = Math.random() * 3 + 1;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            
+            // Random animation duration
+            particle.style.animationDuration = `${Math.random() * 10 + 10}s`;
+            particle.style.animationDelay = `${Math.random() * 5}s`;
+            
+            particlesContainer.appendChild(particle);
+        }
+        
+        // Ripple effect for buttons
+        function createRipple(event) {
+            const button = event.currentTarget;
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            
+            const rect = button.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = event.clientX - rect.left - size / 2;
+            const y = event.clientY - rect.top - size / 2;
+            
+            ripple.style.width = ripple.style.height = `${size}px`;
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+            
+            button.appendChild(ripple);
+            
+            ripple.addEventListener('animationend', () => {
+                ripple.remove();
+            });
+        }
+        
+        document.getElementById('windowsBtn').addEventListener('click', createRipple);
+        document.getElementById('androidBtn').addEventListener('click', createRipple);
+        document.getElementById('discordBtn').addEventListener('click', createRipple);
+        
+        // Card hover tilt effect
+        const cards = document.querySelectorAll('.info-card');
+        
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const angleX = (y - centerY) / 20;
+                const angleY = (centerX - x) / 20;
+                
+                card.style.transform = `perspective(1000px) rotateX(${angleX}deg) rotateY(${angleY}deg) translateY(-10px)`;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(-10px)';
+            });
+        });
+    </script>
+</body>
+</html>
